@@ -10,7 +10,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_1 = __importDefault(require("http"));
-const enviarEmail_1 = require("./enviarEmail");
 const peticionesAPI_1 = require("./peticionesAPI");
 const socket_io_1 = __importDefault(require("socket.io"));
 // const configMensaje = require('./);
@@ -23,7 +22,6 @@ app.use(cors());
 const server = new http_1.default.Server(app);
 const io = socket_io_1.default(server);
 const peticionesAPI = new peticionesAPI_1.PeticionesAPIService();
-const enviarEmail = new enviarEmail_1.EnviarEmailService();
 const port = 8200;
 // const port = 8200;
 let dashSocket;
@@ -164,8 +162,8 @@ io.on("connection", (socket) => {
     socket.on("desconectarJuegoCogerTurno", (clave) => {
         registroNotificacionesJuegos = registroNotificacionesJuegos.filter((elem) => elem.clave !== clave);
     });
-    socket.on("recordarPassword", (datos) => {
-        peticionesAPI.EnviarEmail(datos.email, datos.nombre, datos.contrasena);
+    socket.on("recordarPassword", (email) => {
+        peticionesAPI.EnviarEmail(email);
     });
     socket.on("enviarInfoRegistroAlumno", (datos) => {
         console.log("recibo peticion enviar info alumno ");

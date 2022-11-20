@@ -11,7 +11,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
-const nodemailer = __importStar(require("nodemailer"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const URL = __importStar(require("./urls"));
 class PeticionesAPIService {
     DameAlumnosEquipo(equipoId) {
@@ -31,23 +31,31 @@ class PeticionesAPIService {
     // Si está desactivada la opción "Acceso de apps menos seguras"
     // 
     // 
-    EnviarEmail(email, nombre, contrasena) {
+    EnviarEmail(alumno) {
         console.log('Estoy dentro de EnviarEmail');
-        console.log('creo las opciones');
-        const mailOptions = {
-            from: "Classpip",
-            to: email,
-            subject: "tu contraseña en Classpip",
-            html: nombre + ", <br> Tu contraseña en classpip es: " + contrasena,
-        };
         console.log('creo el transporter');
-        const transporter = nodemailer.createTransport({
+        console.log(alumno.email + alumno.password + alumno.username);
+        let transporter = nodemailer_1.default.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+            },
             auth: {
-                user: "classpip2021@gmail.com",
-                pass: "classpipUPC@2021" // Cambialo por tu password
+                user: "grup2eamola@gmail.com",
+                pass: "dmzfrpqbywjdzdiw" // Cambialo por tu password
             },
             service: "gmail",
         });
+        console.log('creo las opciones');
+        let mailOptions = {
+            from: `"Classpip", "classpipupc@gmail.com"`,
+            to: alumno.email,
+            subject: "Recordatorio de contraseña en Classpip",
+            html: "<h2> Hola " + alumno.username + "!</h2> <h3>Tu contraseña en Classpip es: " + alumno.password +
+                "</h3><h4>Un saludo!</h4><p>Equipo de Classpip</p>",
+        };
         // tslint:disable-next-line:only-arrow-functions
         console.log('voy a eviar email');
         transporter.sendMail(mailOptions, function (err, info) {
@@ -61,7 +69,7 @@ class PeticionesAPIService {
     }
     EnviarEmailRegistroAlumno(profesor, alumno) {
         console.log('voy a enviar emial a ' + alumno.Email);
-        const transporter = nodemailer.createTransport({
+        const transporter = nodemailer_1.default.createTransport({
             auth: {
                 user: "classpip2021@gmail.com",
                 pass: "classpipUPC@2021" // Cambialo por tu password

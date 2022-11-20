@@ -12,7 +12,6 @@
 import axios from "axios";
 import express from "express";
 import http from "http";
-import { EnviarEmailService } from "./enviarEmail";
 import { PeticionesAPIService } from "./peticionesAPI";
 
 // tslint:disable-next-line:ordered-imports
@@ -32,7 +31,6 @@ app.use(cors());
 const server = new http.Server(app);
 const io = socketIO(server);
 const peticionesAPI = new PeticionesAPIService();
-const enviarEmail = new EnviarEmailService();
 
 const port = 8200;
 // const port = 8200;
@@ -201,8 +199,8 @@ io.on("connection", (socket) => {
             registroNotificacionesJuegos = registroNotificacionesJuegos.filter((elem) => elem.clave !== clave);
     });
 
-    socket.on("recordarPassword", (datos) => {
-            peticionesAPI.EnviarEmail(datos.email, datos.nombre, datos.contrasena);
+    socket.on("recordarPassword", (email: string) => {
+            peticionesAPI.EnviarEmail(email);
     });
 
     socket.on("enviarInfoRegistroAlumno", (datos) => {
@@ -396,28 +394,6 @@ io.on("connection", (socket) => {
 
          });
      });
-
-
-     /**
-     *Escuchara hasta que haya un juego des/activo de un grupo, si es el caso enviara una notificacio
-     *a cada miembro del grupo
-     */
-    socket.on('nuevoStatusJuegoGrupo', (info) => {
-        console.log("Nuevo status de juego para el grupo ", info);
-
-        peticionesAPI.DameAlumnosGrupo (info.grupoId).then ((res) => {
-            const alumnos = res.data;
-            console.log("Alumnos del grupo: " + alumnos);
-
-            alumnos.forEach((alumno) => {
-                const conectado = alumnosConectados.filter ((con) => con.id === alumno.id)[0];
-                if (conectado !== undefined) {
-                    console.log ("Envio status juego al alumno " + alumno.id);
-                    conectado.soc.emit ("nuevoStatusJuego", info.mensaje);
-                }
-            });
-        })
-    })
 
         // Para avanzar pregunta
     socket.on("avanzarPregunta", (info) => {
