@@ -1,6 +1,7 @@
 import axios from "axios";
 import http from "http";
-import * as nodemailer from "nodemailer";
+import nodemailer from "nodemailer";
+import SMTPConnection from "nodemailer/lib/smtp-connection";
 import { Observable } from "rxjs";
 import * as URL from "./urls";
 
@@ -25,26 +26,35 @@ export class PeticionesAPIService {
     // 
     // 
 
-    public EnviarEmail(email: string, nombre: string, contrasena: string) {
-        console.log ('Estoy dentro de EnviarEmail');
-        console.log ('creo las opciones');
-        const mailOptions = {
-            from: "Classpip",
-            to: email, // Cambia esta parte por el destinatario
-            subject: "tu contraseña en Classpip",
-            html: nombre + ", <br> Tu contraseña en classpip es: " + contrasena,
-        };
-        console.log ('creo el transporter');
-        const transporter = nodemailer.createTransport({
+    public EnviarEmail(alumno) {
+        console.log ('Estoy dentro de EnviarEmail, creo transporter');
+
+        let transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+              },
             auth: {
-                user: "classpip2021@gmail.com", // Cambialo por tu email
-                pass: "classpipUPC@2021" // Cambialo por tu password
+                user: "classpipupc@gmail.com", // Cambialo por tu email
+                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
+                //lqkijbrazrgqpkly
             },
             service: "gmail",
         });
+
+        console.log ('creo las opciones');
+        let mailOptions = {
+            from: `"Classpip", "classpipupc@gmail.com"`,
+            to: alumno.email, // Cambia esta parte por el destinatario
+            subject: "Recordatorio de contraseña en Classpip",
+            html: "<h2> Hola " + alumno.username + "!</h2> <h3>Tu contraseña en Classpip es: " + alumno.password +
+            "</h3><h4>Un saludo!</h4><p>Equipo de Classpip</p>",
+        };
        
         // tslint:disable-next-line:only-arrow-functions
-        console.log ('voy a eviar email');
+        console.log ('voy a enviar email');
         transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
                 console.log(err);

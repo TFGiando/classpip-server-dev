@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer = __importStar(require("nodemailer"));
 class EnviarEmailService {
-    EnviarEmail() {
+    EnviarEmail(email) {
         const transporter = nodemailer.createTransport({
             auth: {
                 user: 'classpipupc@gmail.com',
@@ -19,9 +19,9 @@ class EnviarEmailService {
         });
         const mailOptions = {
             from: "classpip",
-            to: "miguel.valero@upc.edu",
-            subject: "tu contraseña",
-            html: " Tu contraseña en classpip es esta XXXX",
+            to: email,
+            subject: "Tu contraseña",
+            html: "Tu contraseña en classpip es esta XXXX",
         };
         // tslint:disable-next-line:only-arrow-functions
         transporter.sendMail(mailOptions, function (err, info) {
