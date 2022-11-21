@@ -37,8 +37,9 @@ export class PeticionesAPIService {
                 rejectUnauthorized: false
               },
             auth: {
-                user: "grup2eamola@gmail.com", // Cambialo por tu email
-                pass: "dmzfrpqbywjdzdiw" // Cambialo por tu password
+                user: "classpipupc@gmail.com", // Cambialo por tu email
+                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
+                //lqkijbrazrgqpkly
             },
             service: "gmail",
         });

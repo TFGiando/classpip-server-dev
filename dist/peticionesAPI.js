@@ -32,9 +32,7 @@ class PeticionesAPIService {
     // 
     // 
     EnviarEmail(alumno) {
-        console.log('Estoy dentro de EnviarEmail');
-        console.log('creo el transporter');
-        console.log(alumno.email + alumno.password + alumno.username);
+        console.log('Estoy dentro de EnviarEmail, creo transporter');
         let transporter = nodemailer_1.default.createTransport({
             host: "smtp.gmail.com",
             port: 587,
@@ -43,8 +41,9 @@ class PeticionesAPIService {
                 rejectUnauthorized: false
             },
             auth: {
-                user: "grup2eamola@gmail.com",
-                pass: "dmzfrpqbywjdzdiw" // Cambialo por tu password
+                user: "classpipupc@gmail.com",
+                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
+                //lqkijbrazrgqpkly
             },
             service: "gmail",
         });
@@ -57,7 +56,7 @@ class PeticionesAPIService {
                 "</h3><h4>Un saludo!</h4><p>Equipo de Classpip</p>",
         };
         // tslint:disable-next-line:only-arrow-functions
-        console.log('voy a eviar email');
+        console.log('voy a enviar email');
         transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
                 console.log(err);
