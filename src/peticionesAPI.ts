@@ -5,6 +5,7 @@ import SMTPConnection from "nodemailer/lib/smtp-connection";
 import { Observable } from "rxjs";
 import * as URL from "./urls";
 
+const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 export class PeticionesAPIService {
     public DameAlumnosEquipo(equipoId: number): any {
@@ -39,7 +40,6 @@ export class PeticionesAPIService {
             auth: {
                 user: "classpipupc@gmail.com", // Cambialo por tu email
                 pass: "lqkijbrazrgqpkly" // Cambialo por tu password
-                //lqkijbrazrgqpkly
             },
             service: "gmail",
         });
@@ -65,36 +65,46 @@ export class PeticionesAPIService {
     
     }
 
-    public EnviarEmailRegistroAlumno(profesor: any, alumno: any) {
-        console.log ('voy a enviar emial a ' + alumno.Email);
+    public EnviarEmailRegistroAlumno(alumno) {
+
+        console.log ('voy a enviar emial a ' + alumno.email);
     
-        const transporter = nodemailer.createTransport({
+        let transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+              },
             auth: {
-                user: "classpip2021@gmail.com", // Cambialo por tu email
-                pass: "classpipUPC@2021" // Cambialo por tu password
+                user: "classpipupc@gmail.com", // Cambialo por tu email
+                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
             },
             service: "gmail",
         });
+        
+        let fecha = new Date();
+
         const mailOptions = {
-            from: "Classpip",
-            to: alumno.Email,
-            subject: "registro en Classpip",
-            html:   "Has sido registrado en Classpip por tu profesor: <br>" +
-                    profesor.Nombre + " " + profesor.PrimerApellido + " " + profesor.SegundoApellido +
-                    "<br><br> Tus datos son: <br>" +
-                    "Nombre: " + alumno.Nombre + "<br>" +
-                    "Primer apellido: " + alumno.PrimerApellido + "<br>" +
-                    "Segundo apellido: " + alumno.SegundoApellido + "<br>" +
-                    "Nombre de usuario: " + alumno.Username + "<br>" +
-                    "Contraseña: " + alumno.Password + "<br>" +
-                    "Email: " + alumno.Email + "<br><br>" +
-                    // tslint:disable-next-line:max-line-length
-                    "En cuanto puedas por favor cambia tu contraseña (también puedes cambiar tu nombre de usuario) <br> <br>" +
-                    "Bienvenido a Classpip <br><br>" +
+            from: `"Classpip", "classpipupc@gmail.com"`,
+            to: alumno.email,
+            subject: "Bienvenid@ a Classpip!",
+            html:   "<h2>Te damos la bienvenida a Classpip!</h2>" +
+                    "<h4>Si estás recibiendo este correo, es porque has sido registrado en Classpip por tu profesor. <br>" +
+                    "<br>Los datos de información de tu cuenta son: <br>" +
+                    "Nombre: " + alumno.nombre + "<br>" +
+                    "Primer apellido: " + alumno.primerApellido + "<br>" +
+                    "Segundo apellido: " + alumno.segundoApellido + "<br>" +
+                    "Nombre de usuario: " + alumno.username + "<br>" +
+                    "Contraseña: " + alumno.password + "<br>" +
+                    "Email: " + alumno.email + "<br>" +
+                    "Fecha y hora de registro: " + fecha.toLocaleString() + "<br><br>" +
                     "Recuerda que puedes acceder a la app conectándote a: <br>" +
-                    "classpip.upc.edu:8100",
+                    "classpip.upc.edu:8100</h4>" +
+                    "<p>Att: Equipo de Classpip</p>",
         };
         // tslint:disable-next-line:only-arrow-functions
+        console.log("voy a enviar email")
         transporter.sendMail(mailOptions, function(err, info) {
             if (err) {
                 console.log(err);
@@ -102,8 +112,16 @@ export class PeticionesAPIService {
                 console.log(info);
             }
         });
-    
     }
-}
 
+    generateString() {
+        let result = ' ';
+        const charactersLength = 8;
+        for ( let i = 0; i < 8; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+    
+        return result;
+    }   
+}
 
