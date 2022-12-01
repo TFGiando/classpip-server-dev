@@ -165,9 +165,9 @@ io.on("connection", (socket) => {
     socket.on("recordarPassword", (email) => {
         peticionesAPI.EnviarEmail(email);
     });
-    socket.on("enviarInfoRegistroAlumno", (datos) => {
+    socket.on("enviarInfoRegistroAlumno", (email) => {
         console.log("recibo peticion enviar info alumno ");
-        peticionesAPI.EnviarEmailRegistroAlumno(datos.p, datos.a);
+        peticionesAPI.EnviarEmailRegistroAlumno(email);
     });
     socket.on("respuestaJuegoDeCuestionario", (datos) => {
         console.log("recibo respuesta juengo cuestionario");
