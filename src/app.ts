@@ -203,9 +203,9 @@ io.on("connection", (socket) => {
             peticionesAPI.EnviarEmail(email);
     });
 
-    socket.on("enviarInfoRegistroAlumno", (datos) => {
+    socket.on("enviarInfoRegistroAlumno", (email: string) => {
             console.log("recibo peticion enviar info alumno ");
-            peticionesAPI.EnviarEmailRegistroAlumno(datos.p, datos.a);
+            peticionesAPI.EnviarEmailRegistroAlumno(email);
     });
 
     socket.on("respuestaJuegoDeCuestionario", (datos) => {
