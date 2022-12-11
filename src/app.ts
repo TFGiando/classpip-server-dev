@@ -203,6 +203,10 @@ io.on("connection", (socket) => {
             peticionesAPI.EnviarEmail(email);
     });
 
+    socket.on("enviarCodigoContrasena", (email: string) => {
+        peticionesAPI.EnviarEmailCambioPassw(email)
+    });
+
     socket.on("enviarInfoRegistroAlumno", (email: string) => {
             console.log("recibo peticion enviar info alumno ");
             peticionesAPI.EnviarEmailRegistroAlumno(email);

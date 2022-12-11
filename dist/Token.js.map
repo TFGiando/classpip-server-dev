@@ -1,0 +1,1 @@
+{"version":3,"file":"Token.js","sourceRoot":"","sources":["../src/Token.ts"],"names":[],"mappings":";;AAAA,MAAa,KAAK;IAMd,YAAY,KAAc,EAAE,MAAe,EAAE,aAAoB;QAC7D,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;QACnB,IAAI,CAAC,MAAM,GAAG,MAAM,CAAC;QACrB,IAAI,CAAC,aAAa,GAAG,aAAa,CAAC;IACvC,CAAC;CACJ;AAXD,sBAWC"}

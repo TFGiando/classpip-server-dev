@@ -13,7 +13,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const URL = __importStar(require("./urls"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const JWT_SECRET = "SECRETOCLASSPIP";
 class PeticionesAPIService {
     DameAlumnosEquipo(equipoId) {
         return axios_1.default.get(URL.APIUrlEquipos + "/" + equipoId + "/alumnos");
@@ -111,13 +113,53 @@ class PeticionesAPIService {
             }
         });
     }
-    generateString() {
-        let result = ' ';
-        const charactersLength = 8;
-        for (let i = 0; i < 8; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
+    EnviarEmailCambioPassw(alumno) {
+        console.log('voy a enviar emial a ' + alumno.email);
+        let transporter = nodemailer_1.default.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+            },
+            auth: {
+                user: "classpipupc@gmail.com",
+                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
+            },
+            service: "gmail",
+        });
+        const secret = JWT_SECRET + alumno.contrasena;
+        const payload = {
+            id: alumno.id,
+            email: alumno.email
+        };
+        const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '15m' });
+        const link = "http://localhost:8100/cambiar-contrasena/" + alumno.id + "/" + token;
+        console.log(link);
+        console.log(alumno.email);
+        const mailOptions = {
+            from: `"Classpip", "classpipupc@gmail.com"`,
+            to: alumno.email,
+            subject: "Cambio de contraseña para tu cuenta",
+            html: "<h3> Hola! <h4>" +
+                "<h4>Por lo visto, se está requiriendo cambiar la contraseña de su cuenta Classpip <h4>" +
+                "<h4>Para ello, en primer lugar recuerde su id: <h4>" +
+                alumno.id +
+                "le dejamos el link al que acceder a continuación: <h4>" +
+                link
+                +
+                    "<p>Att: Equipo de Classpip</p>",
+        };
+        // tslint:disable-next-line:only-arrow-functions
+        console.log("voy a enviar email");
+        transporter.sendMail(mailOptions, function (err, info) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log(info);
+            }
+        });
     }
 }
 exports.PeticionesAPIService = PeticionesAPIService;
