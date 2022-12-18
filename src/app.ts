@@ -200,7 +200,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("recordarPassword", (email: string) => {
-            peticionesAPI.EnviarEmail(email);
+            peticionesAPI.EnviarEmailContrasena(email);
     });
 
     socket.on("enviarCodigoContrasena", (email: string) => {
