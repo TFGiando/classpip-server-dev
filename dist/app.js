@@ -163,7 +163,10 @@ io.on("connection", (socket) => {
         registroNotificacionesJuegos = registroNotificacionesJuegos.filter((elem) => elem.clave !== clave);
     });
     socket.on("recordarPassword", (email) => {
-        peticionesAPI.EnviarEmail(email);
+        peticionesAPI.EnviarEmailContrasena(email);
+    });
+    socket.on("enviarCodigoContrasena", (email) => {
+        peticionesAPI.EnviarEmailCambioPassw(email);
     });
     socket.on("enviarInfoRegistroAlumno", (email) => {
         console.log("recibo peticion enviar info alumno ");

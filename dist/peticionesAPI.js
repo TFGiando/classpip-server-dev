@@ -13,7 +13,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const URL = __importStar(require("./urls"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const JWT_SECRET = "SECRETOCLASSPIP";
 class PeticionesAPIService {
     DameAlumnosEquipo(equipoId) {
         return axios_1.default.get(URL.APIUrlEquipos + "/" + equipoId + "/alumnos");
@@ -21,18 +23,7 @@ class PeticionesAPIService {
     DameAlumnosGrupo(grupoId) {
         return axios_1.default.get(URL.APIUrlGrupos + "/" + grupoId + "/alumnos");
     }
-    // Si pasa tiempo sin enviar emails entonces en la cuenta de gmail se desactiva la opcion
-    // de permitir el acceso a aplicaciones no seguras.
-    // En ese caso hay que hacer lo siguiente:
-    //Loguearse en gmail con la cuenta de classpip
-    // Conectarse a esta url:
-    // https://support.google.com/mail/?p=BadCredentials
-    // ir a:
-    // permitir que apps menos seguras accedan a tu cuenta.
-    // Si está desactivada la opción "Acceso de apps menos seguras"
-    // 
-    // 
-    EnviarEmail(alumno) {
+    EnviarEmailContrasena(alumno) {
         console.log('Estoy dentro de EnviarEmail, creo transporter');
         let transporter = nodemailer_1.default.createTransport({
             host: "smtp.gmail.com",
@@ -43,11 +34,10 @@ class PeticionesAPIService {
             },
             auth: {
                 user: "classpipupc@gmail.com",
-                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
+                pass: "lqkijbrazrgqpkly"
             },
             service: "gmail",
         });
-        console.log('creo las opciones');
         let mailOptions = {
             from: `"Classpip", "classpipupc@gmail.com"`,
             to: alumno.email,
@@ -55,8 +45,6 @@ class PeticionesAPIService {
             html: "<h2> Hola " + alumno.username + "!</h2> <h3>Tu contraseña en Classpip es: " + alumno.password +
                 "</h3><h4>Un saludo!</h4><p>Equipo de Classpip</p>",
         };
-        // tslint:disable-next-line:only-arrow-functions
-        console.log('voy a enviar email');
         transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
                 console.log(err);
@@ -77,7 +65,7 @@ class PeticionesAPIService {
             },
             auth: {
                 user: "classpipupc@gmail.com",
-                pass: "lqkijbrazrgqpkly" // Cambialo por tu password
+                pass: "lqkijbrazrgqpkly"
             },
             service: "gmail",
         });
@@ -100,8 +88,6 @@ class PeticionesAPIService {
                 "classpip.upc.edu:8100</h4>" +
                 "<p>Att: Equipo de Classpip</p>",
         };
-        // tslint:disable-next-line:only-arrow-functions
-        console.log("voy a enviar email");
         transporter.sendMail(mailOptions, function (err, info) {
             if (err) {
                 console.log(err);
@@ -111,13 +97,47 @@ class PeticionesAPIService {
             }
         });
     }
-    generateString() {
-        let result = ' ';
-        const charactersLength = 8;
-        for (let i = 0; i < 8; i++) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-        }
-        return result;
+    EnviarEmailCambioPassw(alumno) {
+        console.log('voy a enviar emial a ' + alumno.email);
+        let transporter = nodemailer_1.default.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
+            tls: {
+                rejectUnauthorized: false
+            },
+            auth: {
+                user: "classpipupc@gmail.com",
+                pass: "lqkijbrazrgqpkly"
+            },
+            service: "gmail",
+        });
+        const secret = JWT_SECRET + alumno.contrasena;
+        const payload = {
+            id: alumno.id
+        };
+        const token = jsonwebtoken_1.default.sign(payload, secret, { expiresIn: '15m' });
+        const link = "http://localhost:8100/cambiar-contrasena/" + alumno.id + "/" + token;
+        console.log(link);
+        const mailOptions = {
+            from: `"Classpip", "classpipupc@gmail.com"`,
+            to: alumno.email,
+            subject: "Cambio de contraseña para tu cuenta",
+            html: "<h3> Hola! <h4>" +
+                "<h4>Por lo visto, se está requiriendo cambiar la contraseña de su cuenta Classpip <h4>" +
+                "<h4> Para ello, haga click en el link que aparece a continuación para proceder a ello: <h4>" +
+                link
+                +
+                    "<p>Att: Equipo de Classpip</p>",
+        };
+        transporter.sendMail(mailOptions, function (err, info) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                console.log(info);
+            }
+        });
     }
 }
 exports.PeticionesAPIService = PeticionesAPIService;
