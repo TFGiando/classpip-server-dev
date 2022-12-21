@@ -399,6 +399,27 @@ io.on("connection", (socket) => {
          });
      });
 
+    /**
+     *Escuchara hasta que haya un juego des/activo de un grupo, si es el caso enviara una notificacion
+     *a cada miembro del grupo
+     */
+     socket.on('nuevoStatusJuegoGrupo', (info) => {
+        console.log("Nuevo status de juego para el grupo ", info);
+
+        peticionesAPI.DameAlumnosGrupo (info.grupoId).then ((res) => {
+            const alumnos = res.data;
+            console.log("Alumnos del grupo: " + alumnos);
+
+            alumnos.forEach((alumno) => {
+                const conectado = alumnosConectados.filter ((con) => con.id === alumno.id)[0];
+                if (conectado !== undefined) {
+                    console.log ("Envio status juego al alumno " + alumno.id);
+                    conectado.soc.emit ("nuevoStatusJuego", info.mensaje);
+                }
+            });
+        })
+    })
+
         // Para avanzar pregunta
     socket.on("avanzarPregunta", (info) => {
             console.log("Avanzar pregunta");
